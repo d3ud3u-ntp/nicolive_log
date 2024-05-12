@@ -1,0 +1,22 @@
+{
+    "name": "はじめての拡張機能",
+    "description": "機能を拡張するものです",
+    "version": "1.0",
+    "manifest_version": 3,
+    "action": {
+        "default_popup": "popup.html"
+      },
+    "background": {
+        "service_worker": "/js/background.js"
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "js": [
+                "/js/content.js"
+            ]
+        }
+    ]
+  }
