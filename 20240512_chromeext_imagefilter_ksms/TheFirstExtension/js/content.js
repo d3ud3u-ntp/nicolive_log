@@ -1,50 +1,37 @@
-// content.js
+// ページ内の全ての画像要素を取得
 const images = document.querySelectorAll('img');
 
-for (const image of images) {
-  const canvas = document.createElement('canvas');
-  const context = canvas.getContext('2d');
+// 各画像要素に対して処理を行う
+for (const img of images) {
+  // 画像が読み込まれた後に処理を実行
+//   img.addEventListener('load', () => {
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = img.width;
+    canvas.height = img.height;
+    ctx.drawImage(img, 0, 0);
 
-  canvas.width = image.width;
-  canvas.height = image.height;
-  context.drawImage(image, 0, 0);
+    // ランダムな点を100回選択し、その点の色を取得して「A」を描画
+    for (let i = 0; i < 100; i++) {
+      const x = Math.floor(Math.random() * canvas.width);
+      const y = Math.floor(Math.random() * canvas.height);
+      console.log("x="+x);
+      console.log("y="+y);
+      const pixelData = ctx.getImageData(x, y, 1, 1).data;
+      console.log("pixel="+pixelData);
+      const r = pixelData[0];
+      const g = pixelData[1];
+      const b = pixelData[2];
+      const color = `rgb(${r}, ${g}, ${b})`;
 
-  const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
-  const data = imageData.data;
-
-  const blockSize = 8; // モザイクブロックのサイズ
-  for (let y = 0; y < canvas.height; y += blockSize) {
-    for (let x = 0; x < canvas.width; x += blockSize) {
-      const baseIndex = (y * canvas.width + x) * 4;
-      const avgColor = getAverageColor(data, baseIndex, blockSize, canvas.width);
-      setBlockColor(data, baseIndex, blockSize, canvas.width, avgColor);
+      ctx.font = '20px Arial';
+      ctx.fillStyle = color;
+      ctx.fillText('A', x, y);
     }
-  }
 
-  context.putImageData(imageData, 0, 0);
-  image.src = canvas.toDataURL();
-}
-
-function getAverageColor(data, baseIndex, blockSize, width) {
-  let r = 0, g = 0, b = 0;
-  const count = blockSize * blockSize;
-  for (let i = 0; i < count; i++) {
-    const offset = baseIndex + (i % blockSize) * 4 + Math.floor(i / blockSize) * width * 4;
-    r += data[offset];
-    g += data[offset + 1];
-    b += data[offset + 2];
-  }
-  r = Math.round(r / count);
-  g = Math.round(g / count);
-  b = Math.round(b / count);
-  return { r, g, b };
-}
-
-function setBlockColor(data, baseIndex, blockSize, width, { r, g, b }) {
-  for (let i = 0; i < blockSize * blockSize; i++) {
-    const offset = baseIndex + (i % blockSize) * 4 + Math.floor(i / blockSize) * width * 4;
-    data[offset] = r;
-    data[offset + 1] = g;
-    data[offset + 2] = b;
-  }
-}
+    // 処理後の画像をページに反映
+    const processedImage = new Image();
+    processedImage.src = canvas.toDataURL();
+    img.parentNode.replaceChild(processedImage, img);
+//   });
+};
