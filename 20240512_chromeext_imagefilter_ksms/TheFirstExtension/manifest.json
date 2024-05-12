@@ -9,6 +9,12 @@
     "background": {
         "service_worker": "/js/background.js"
     },
+    "web_accessible_resources": [
+        {
+          "resources": ["abea.ttf"],
+          "matches": ["<all_urls>"]
+        }
+    ],
     "content_scripts": [
         {
             "matches": [
